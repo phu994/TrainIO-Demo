@@ -2,8 +2,10 @@ const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
+const path = require("path");
 
-app.use(express.static(__dirname));
+// Phục vụ các file trong thư mục 'public'
+app.use(express.static(path.join(__dirname, "public")));
 
 const players = {};
 const fruits = [];
@@ -27,7 +29,8 @@ io.on("connection", socket => {
       body: [{ x: 400, y: 300 }],
       length: 5,
       name,
-      boost: false
+      boost: false,
+      score: 0
     };
     socket.emit("init", { id: socket.id });
   });
@@ -65,17 +68,14 @@ setInterval(() => {
     // Cập nhật toa tàu
     p.body.unshift({ x: p.x, y: p.y });
 
-    // Rút ngắn chiều dài khi đang boost
     if (p.boost && p.length > 5) {
       p.length -= 0.1;
     }
 
-    // Cắt bớt toa nếu dư
     while (p.body.length > Math.floor(p.length)) {
       p.body.pop();
     }
 
-    // Ăn trái cây
     for (let i = fruits.length - 1; i >= 0; i--) {
       const f = fruits[i];
       const dx = f.x - p.x;
@@ -83,6 +83,7 @@ setInterval(() => {
       const dist = Math.hypot(dx, dy);
       if (dist < f.size + 10) {
         p.length += f.size === 20 ? 3 : 1;
+        p.score = (p.score || 0) + (f.size === 20 ? 3 : 1);
         fruits.splice(i, 1);
       }
     }
@@ -90,10 +91,4 @@ setInterval(() => {
 
   io.emit("state", {
     players,
-    fruits
-  });
-}, 30);
-
-server.listen(process.env.PORT || 3000, () => {
-  console.log("🚀 Server is running on port 3000");
-});
+    fru
