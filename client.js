@@ -1,13 +1,21 @@
-
 const socket = io();
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let train = [];
+let train = {};
 let fruits = [];
 let id = null;
 
-// Gửi vị trí chuột liên tục
+function startGame() {
+    const name = document.getElementById("playerName").value.trim();
+    if (!name) return alert("Bạn cần nhập tên!");
+
+    document.getElementById("nameForm").style.display = "none";
+    canvas.style.display = "block";
+
+    socket.emit("join", { name });
+}
+
 canvas.addEventListener("mousemove", e => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -15,7 +23,10 @@ canvas.addEventListener("mousemove", e => {
     socket.emit("move", { x, y });
 });
 
-socket.on("init", data => { id = data.id; });
+socket.on("init", data => {
+    id = data.id;
+});
+
 socket.on("state", state => {
     train = state.players;
     fruits = state.fruits;
@@ -24,7 +35,6 @@ socket.on("state", state => {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Vẽ trái cây
     for (const fruit of fruits) {
         ctx.fillStyle = fruit.size > 15 ? "orange" : "lime";
         ctx.beginPath();
@@ -32,7 +42,6 @@ function draw() {
         ctx.fill();
     }
 
-    // Vẽ tàu
     for (const playerId in train) {
         const t = train[playerId];
         ctx.fillStyle = playerId === id ? "blue" : "gray";
@@ -40,6 +49,14 @@ function draw() {
             ctx.beginPath();
             ctx.arc(segment.x, segment.y, 10, 0, 2 * Math.PI);
             ctx.fill();
+        }
+
+        // Vẽ tên người chơi
+        if (t.name) {
+            ctx.fillStyle = "black";
+            ctx.font = "12px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(t.name, t.x, t.y - 15);
         }
     }
 
