@@ -10,6 +10,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const players = {};
 const fruits = [];
 
+// Hàm tạo trái cây ngẫu nhiên
 function spawnFruit() {
   const size = Math.random() < 0.3 ? 20 : 10; // 30% là trái lớn
   fruits.push({
@@ -20,6 +21,7 @@ function spawnFruit() {
 }
 setInterval(spawnFruit, 1000);
 
+// Kết nối với client
 io.on("connection", socket => {
   socket.on("join", data => {
     const name = data.name || "Ẩn danh";
@@ -57,6 +59,7 @@ io.on("connection", socket => {
   });
 });
 
+// Cập nhật trạng thái game liên tục
 setInterval(() => {
   for (const id in players) {
     const p = players[id];
@@ -76,6 +79,7 @@ setInterval(() => {
       p.body.pop();
     }
 
+    // Xử lý ăn trái cây
     for (let i = fruits.length - 1; i >= 0; i--) {
       const f = fruits[i];
       const dx = f.x - p.x;
@@ -83,12 +87,20 @@ setInterval(() => {
       const dist = Math.hypot(dx, dy);
       if (dist < f.size + 10) {
         p.length += f.size === 20 ? 3 : 1;
-        p.score = (p.score || 0) + (f.size === 20 ? 3 : 1);
+        p.score = (p.score || 0) + (f.size === 20 ? 30 : 10);
         fruits.splice(i, 1);
       }
     }
   }
 
+  // Gửi trạng thái mới cho tất cả client
   io.emit("state", {
     players,
-    fru
+    fruits
+  });
+}, 30);
+
+// Khởi động server
+server.listen(process.env.PORT || 3000, () => {
+  console.log("🚀 Server is running on port 3000");
+});
