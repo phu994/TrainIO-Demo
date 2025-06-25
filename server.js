@@ -62,12 +62,15 @@ setInterval(() => {
     p.x += p.vx * speed;
     p.y += p.vy * speed;
 
+    // Cập nhật toa tàu
     p.body.unshift({ x: p.x, y: p.y });
 
+    // Rút ngắn chiều dài khi đang boost
     if (p.boost && p.length > 5) {
-      p.length -= 0.1; // rút toa
+      p.length -= 0.1;
     }
 
+    // Cắt bớt toa nếu dư
     while (p.body.length > Math.floor(p.length)) {
       p.body.pop();
     }
@@ -92,5 +95,5 @@ setInterval(() => {
 }, 30);
 
 server.listen(process.env.PORT || 3000, () => {
-  console.log("Server is running on port 3000");
+  console.log("🚀 Server is running on port 3000");
 });
