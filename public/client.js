@@ -7,7 +7,7 @@ let train = {};
 let fruits = [];
 let id = null;
 
-// Load hình ảnh (sửa lại đường dẫn)
+// Load hình ảnh
 const fruitImg = new Image();
 fruitImg.src = "/assets/fruit.png";
 
@@ -65,8 +65,21 @@ function draw() {
         const t = train[playerId];
         const isMe = playerId === id;
 
-        for (const segment of t.body) {
-            ctx.drawImage(trainImg, segment.x - 10, segment.y - 10, 20, 20);
+        for (let i = 0; i < t.body.length; i++) {
+            const segment = t.body[i];
+            let angle = 0;
+
+            if (i === 0 && t.body.length > 1) {
+                // Đầu tàu xoay theo hướng đi
+                const next = t.body[1];
+                angle = Math.atan2(segment.y - next.y, segment.x - next.x);
+            }
+
+            ctx.save();
+            ctx.translate(segment.x, segment.y);
+            ctx.rotate(angle);
+            ctx.drawImage(trainImg, -10, -10, 20, 20);
+            ctx.restore();
         }
 
         // Vẽ tên người chơi
