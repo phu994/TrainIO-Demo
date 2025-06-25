@@ -1,7 +1,22 @@
 const socket = io();
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+let isBoosting = false;
 
+// Khi giữ chuột trái
+document.addEventListener("mousedown", e => {
+  if (e.button === 0) isBoosting = true;
+});
+
+// Khi nhả chuột trái
+document.addEventListener("mouseup", e => {
+  if (e.button === 0) isBoosting = false;
+});
+
+// Cứ mỗi 100ms, gửi trạng thái boost lên server
+setInterval(() => {
+  socket.emit("boost", isBoosting);
+}, 100);
 let train = {};
 let fruits = [];
 let id = null;
