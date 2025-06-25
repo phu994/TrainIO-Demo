@@ -7,12 +7,12 @@ let train = {};
 let fruits = [];
 let id = null;
 
-// Load hình ảnh
+// Load hình ảnh (sửa lại đường dẫn)
 const fruitImg = new Image();
-fruitImg.src = "assets/fruit.png";
+fruitImg.src = "/assets/fruit.png";
 
 const trainImg = new Image();
-trainImg.src = "assets/train_segment.png";
+trainImg.src = "/assets/train_segment.png";
 
 // Bắt đầu game
 function startGame() {
