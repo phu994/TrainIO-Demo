@@ -1,15 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Train.io Demo</title>
+  <title>Train.io - Đặt tên người chơi</title>
   <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; background: #eef; }
+    body { margin: 0; overflow: hidden; font-family: sans-serif; }
+    canvas { display: none; background: #eef; }
+    #nameForm {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #aaa;
+      text-align: center;
+    }
+    input { padding: 8px; font-size: 16px; }
+    button { padding: 8px 12px; font-size: 16px; margin-left: 8px; }
   </style>
 </head>
 <body>
+  <div id="nameForm">
+    <h2>Nhập tên của bạn</h2>
+    <input type="text" id="playerName" placeholder="Tên của bạn..." />
+    <button onclick="startGame()">Bắt đầu</button>
+  </div>
   <canvas id="gameCanvas" width="800" height="600"></canvas>
   <script src="/socket.io/socket.io.js"></script>
   <script src="client.js"></script>
